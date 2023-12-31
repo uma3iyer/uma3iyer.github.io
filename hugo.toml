@@ -2,3 +2,22 @@ baseURL = 'https://uiyer.com/'
 languageCode = 'en-us'
 title = 'Uma Iyer'
 theme = 'hermit-v2'
+enableEmoji= true
+
+[params.author]
+name = "Uma Iyer"
+about = "Uma Iyer's website"
+
+[params]
+description = "Uma Iyer's website"
+footerCopyright = "CC BY-NC-SA"
+
+  [[params.socialLinks]]
+    name = "email"
+    url = "umaiyer@umich.edu"
+  [[params.socialLinks]]
+    name = "github"
+    url = "https://github.com/uma3iyer/"
+  [[params.socialLinks]]
+    name = "linkedin"
+    url = "https://example.com"
