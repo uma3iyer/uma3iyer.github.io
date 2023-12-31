@@ -14,7 +14,7 @@ footerCopyright = "CC BY-NC-SA"
 
   [[params.socialLinks]]
     name = "email"
-    url = "mailto://umaiyer@umich.edu"
+    url = "mailto:umaiyer@umich.edu"
   [[params.socialLinks]]
     name = "github"
     url = "https://github.com/uma3iyer/"
