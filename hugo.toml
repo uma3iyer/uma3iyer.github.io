@@ -11,6 +11,7 @@ about = "Uma Iyer's website"
 [params]
 description = "Uma Iyer's website"
 footerCopyright = "CC BY-NC-SA"
+homeSubtitle = "University of Michigan BS in CS/Econ"
 
   [[params.socialLinks]]
     name = "email"
