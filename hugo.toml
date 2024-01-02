@@ -22,3 +22,6 @@ homeSubtitle = "University of Michigan BS in CS/Econ"
   [[params.socialLinks]]
     name = "linkedin"
     url = "https://www.linkedin.com/in/uma3iyer"
+  [[params.socialLinks]]
+    name = "resume"
+    url = "resume.pdf"
