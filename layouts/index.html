@@ -123,7 +123,9 @@
         {{- $labels := dict "email" "Email" "github" "GitHub" "linkedin" "LinkedIn" "resume" "Resume" }}
         <div class="home-social">
           {{- range . }}
-          <a class="social-item" href="{{ .url | safeURL }}" target="_blank" rel="noopener me"
+          <a class="social-item"
+             href="{{ if eq .name "email" }}mailto:uma3iyer@gmail.com{{ else }}{{ .url | safeURL }}{{ end }}"
+             {{- if ne .name "email" }} target="_blank" rel="noopener me"{{ end }}
              title="{{ index $labels .name | default (.name | humanize) }}">
             {{ partial "svg.html" . }}
             <span class="social-label">{{ index $labels .name | default (.name | humanize) }}</span>
