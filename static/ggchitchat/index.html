@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ggchitchat — Gilmore Girls Chit Chat</title>
+  <link rel="icon" href="/favicon.ico">
+  <style>
+    :root {
+      --theme: #018574;
+      --text: #e8eef2;
+      --light-grey: #494f5c;
+      --dark-grey: #3B3E48;
+      --highlight-grey: #7d828a;
+      --midnightblue: #2c3e50;
+      --fonts: "Trebuchet MS", Verdana, "Verdana Ref", "Segoe UI", Candara,
+        "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Tahoma, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      background: var(--light-grey);
+      line-height: 1.6;
+      letter-spacing: .06em;
+    }
+
+    body {
+      margin: 0;
+      color: var(--text);
+      background: var(--light-grey);
+      font-family: var(--fonts);
+      min-height: 100vh;
+    }
+
+    a {
+      color: var(--text);
+      text-decoration: none;
+      transition: color .4s ease-out;
+    }
+    a:hover { color: #fff; text-shadow: 0 0 1px #fff; }
+
+    .wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 2.5rem 1rem 2rem;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .top-link {
+      font-size: .9rem;
+      opacity: .8;
+      margin-bottom: 1rem;
+    }
+    .top-link:hover { opacity: 1; }
+
+    header h1 {
+      margin: 0 0 .25rem;
+      font-size: 1.9rem;
+    }
+    header p.subtitle {
+      margin: 0 0 1.25rem;
+      opacity: .8;
+      font-size: .95rem;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+    .controls label {
+      font-size: .9rem;
+      opacity: .85;
+    }
+    select {
+      color: var(--text);
+      background: var(--dark-grey);
+      font-family: var(--fonts);
+      font-size: .95rem;
+      border: 1px solid var(--highlight-grey);
+      border-radius: 6px;
+      padding: .4rem .6rem;
+      cursor: pointer;
+      letter-spacing: .04em;
+    }
+    select:focus { outline: none; border-color: var(--theme); }
+
+    .cold-note {
+      font-size: .82rem;
+      background: rgba(1, 133, 116, .14);
+      border: 1px solid var(--theme);
+      border-radius: 6px;
+      padding: .5rem .7rem;
+      margin-bottom: .9rem;
+      opacity: .95;
+    }
+    .cold-note.hidden { display: none; }
+
+    .messages {
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+      gap: .75rem;
+      overflow-y: auto;
+      padding: 1rem;
+      min-height: 260px;
+      max-height: 56vh;
+      background: rgba(0, 0, 0, .12);
+      border-radius: 8px;
+      box-shadow: inset 0 1px 6px rgba(0, 0, 0, .2);
+    }
+
+    .empty-hint {
+      margin: auto;
+      opacity: .55;
+      font-size: .9rem;
+      text-align: center;
+    }
+
+    .msg {
+      max-width: 80%;
+      display: flex;
+      flex-direction: column;
+      gap: .2rem;
+    }
+    .msg .who {
+      font-size: .72rem;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      opacity: .65;
+    }
+    .msg .bubble {
+      padding: .55rem .8rem;
+      border-radius: 12px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      font-size: .96rem;
+    }
+
+    .msg.user {
+      align-self: flex-end;
+      align-items: flex-end;
+    }
+    .msg.user .bubble {
+      background: var(--theme);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+
+    .msg.bot {
+      align-self: flex-start;
+      align-items: flex-start;
+    }
+    .msg.bot .bubble {
+      background: var(--dark-grey);
+      color: var(--text);
+      border-bottom-left-radius: 4px;
+    }
+
+    /* typing indicator */
+    .typing .bubble {
+      display: inline-flex;
+      gap: 4px;
+      align-items: center;
+    }
+    .typing .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--text);
+      opacity: .5;
+      animation: blink 1.2s infinite both;
+    }
+    .typing .dot:nth-child(2) { animation-delay: .2s; }
+    .typing .dot:nth-child(3) { animation-delay: .4s; }
+    @keyframes blink {
+      0%, 80%, 100% { opacity: .2; transform: translateY(0); }
+      40% { opacity: 1; transform: translateY(-2px); }
+    }
+
+    .input-row {
+      display: flex;
+      gap: .6rem;
+      margin-top: 1rem;
+    }
+    .input-row input {
+      flex: 1 1 auto;
+      color: var(--text);
+      background: var(--dark-grey);
+      font-family: var(--fonts);
+      font-size: 1rem;
+      letter-spacing: .04em;
+      border: 1px solid var(--highlight-grey);
+      border-radius: 6px;
+      padding: .6rem .8rem;
+    }
+    .input-row input:focus { outline: none; border-color: var(--theme); }
+    .input-row button {
+      flex: 0 0 auto;
+      color: #fff;
+      background: var(--theme);
+      font-family: var(--fonts);
+      font-size: 1rem;
+      letter-spacing: .04em;
+      border: none;
+      border-radius: 6px;
+      padding: .6rem 1.2rem;
+      cursor: pointer;
+      transition: filter .15s ease;
+    }
+    .input-row button:hover:not(:disabled) { filter: brightness(1.15); }
+    .input-row input:disabled,
+    .input-row button:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+    }
+
+    .disclaimer {
+      margin-top: 1.1rem;
+      font-size: .78rem;
+      opacity: .55;
+      text-align: center;
+    }
+
+    @media (max-width: 600px) {
+      .wrap { padding-top: 1.5rem; }
+      .messages { max-height: 50vh; }
+      .msg { max-width: 90%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <a class="top-link" href="/">← Back to uiyer.com</a>
+
+    <header>
+      <h1>Gilmore Girls Chit Chat</h1>
+      <p class="subtitle">Chat with the characters of Gilmore Girls.</p>
+    </header>
+
+    <div class="controls">
+      <label for="character">Talking to:</label>
+      <select id="character"></select>
+    </div>
+
+    <div class="cold-note" id="coldNote">
+      Heads up: the server may take ~30 seconds to wake up on the first message.
+    </div>
+
+    <div class="messages" id="messages" aria-live="polite">
+      <p class="empty-hint" id="emptyHint">Pick a character and say hello!</p>
+    </div>
+
+    <div class="input-row">
+      <input
+        type="text"
+        id="input"
+        placeholder="Type a message…"
+        autocomplete="off"
+        aria-label="Message">
+      <button id="send" type="button">Send</button>
+    </div>
+
+    <p class="disclaimer">Replies are AI-generated and not affiliated with the show.</p>
+  </div>
+
+  <script>
+    const SPACE_URL = "https://umaiyer-ggchat-api.hf.space";
+    const CHARACTERS = ["Lorelai", "Rory", "Luke", "Kirk", "Sookie", "Emily", "Paris"];
+
+    const selectEl = document.getElementById("character");
+    const inputEl = document.getElementById("input");
+    const sendBtn = document.getElementById("send");
+    const messagesEl = document.getElementById("messages");
+    const coldNote = document.getElementById("coldNote");
+    let emptyHint = document.getElementById("emptyHint");
+
+    let firstMessageSent = false;
+    let busy = false;
+    let history = [];                 // in-memory conversation log (not sent to backend)
+    let conversationToken = 0;        // generation counter, bumped on each character switch
+    let activeController = null;      // AbortController for the in-flight /chat fetch
+
+    // Populate character selector
+    for (const name of CHARACTERS) {
+      const opt = document.createElement("option");
+      opt.value = name;
+      opt.textContent = name;
+      selectEl.appendChild(opt);
+    }
+    selectEl.value = "Lorelai";
+
+    function scrollToBottom() {
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+
+    function clearEmptyHint() {
+      if (emptyHint && emptyHint.parentNode) emptyHint.remove();
+    }
+
+    function appendMessage(role, who, text) {
+      clearEmptyHint();
+      const msg = document.createElement("div");
+      msg.className = "msg " + role;
+
+      if (who) {
+        const whoEl = document.createElement("div");
+        whoEl.className = "who";
+        whoEl.textContent = who;
+        msg.appendChild(whoEl);
+      }
+
+      const bubble = document.createElement("div");
+      bubble.className = "bubble";
+      bubble.textContent = text;
+      msg.appendChild(bubble);
+
+      messagesEl.appendChild(msg);
+      scrollToBottom();
+      return msg;
+    }
+
+    function appendUser(text) {
+      history.push({ role: "user", text: text });
+      return appendMessage("user", "You", text);
+    }
+
+    function appendCharacter(character, text) {
+      history.push({ role: "bot", character: character, text: text });
+      return appendMessage("bot", character, text);
+    }
+
+    function showEmptyHint() {
+      const p = document.createElement("p");
+      p.className = "empty-hint";
+      p.textContent = "Pick a character and say hello!";
+      messagesEl.appendChild(p);
+      emptyHint = p;
+    }
+
+    // Start a completely fresh conversation: clear the screen and in-memory history.
+    function resetConversation() {
+      messagesEl.innerHTML = "";
+      history = [];
+      showEmptyHint();
+    }
+
+    function appendTyping(character) {
+      clearEmptyHint();
+      const msg = document.createElement("div");
+      msg.className = "msg bot typing";
+
+      const whoEl = document.createElement("div");
+      whoEl.className = "who";
+      whoEl.textContent = character;
+      msg.appendChild(whoEl);
+
+      const bubble = document.createElement("div");
+      bubble.className = "bubble";
+      bubble.innerHTML = '<span class="dot"></span><span class="dot"></span><span class="dot"></span>';
+      msg.appendChild(bubble);
+
+      messagesEl.appendChild(msg);
+      scrollToBottom();
+      return msg;
+    }
+
+    function setBusy(value) {
+      busy = value;
+      inputEl.disabled = value;
+      sendBtn.disabled = value;
+      // Selector stays enabled while busy so the user can switch characters mid-reply.
+    }
+
+    const CHAT_TIMEOUT_MS = 90000;   // long timeout to ride out a cold start
+    const MAX_ATTEMPTS = 3;          // 1 initial try + 2 retries
+    const RETRY_BACKOFF_MS = 1500;
+    const WAKING_MESSAGE = "Waking up the characters — they'll be ready to chat in a few moments…";
+
+    function delay(ms) {
+      return new Promise(function (resolve) { setTimeout(resolve, ms); });
+    }
+
+    async function fetchWithTimeout(url, opts, ms) {
+      const controller = new AbortController();
+      activeController = controller;   // expose so a character switch can abort this fetch
+      const timer = setTimeout(function () { controller.abort(); }, ms);
+      try {
+        return await fetch(url, Object.assign({}, opts, { signal: controller.signal }));
+      } finally {
+        clearTimeout(timer);
+        if (activeController === controller) activeController = null;
+      }
+    }
+
+    // Set the waiting/status text shown inside the typing bubble's label.
+    function setWaitingNote(typingEl, text) {
+      const whoEl = typingEl.querySelector(".who");
+      if (whoEl) whoEl.textContent = text;
+    }
+
+    async function send() {
+      if (busy) return;
+      const character = selectEl.value;
+      const message = inputEl.value.trim();
+      if (!message) return;
+
+      // Capture the conversation generation; if the user switches characters before this
+      // reply returns, conversationToken changes and we discard the stale response.
+      const myToken = conversationToken;
+
+      appendUser(message);
+      inputEl.value = "";
+      setBusy(true);
+      const typing = appendTyping(character);
+
+      // Reassure the user that a slow response means the Space is warming up.
+      const wakingTimer = setTimeout(function () {
+        setWaitingNote(typing, WAKING_MESSAGE);
+      }, 4000);
+
+      try {
+        let lastError = null;
+        for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+          // User switched characters mid-reply — abandon this send silently.
+          if (myToken !== conversationToken) return;
+          // A retry almost always means a cold start, so show the waking note.
+          if (attempt > 1) setWaitingNote(typing, WAKING_MESSAGE);
+          try {
+            const res = await fetchWithTimeout(SPACE_URL + "/chat", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ character, message }),
+            }, CHAT_TIMEOUT_MS);
+            if (myToken !== conversationToken) return;   // switched during the request
+            if (!res.ok) throw new Error("HTTP " + res.status);
+            const data = await res.json();
+            if (myToken !== conversationToken) return;   // switched while parsing
+            const reply = data.reply ?? data.response ?? data.message ?? "(no reply)";
+            clearTimeout(wakingTimer);
+            typing.remove();
+            appendCharacter(character, reply);
+            return;
+          } catch (err) {
+            // A switch aborts the fetch; bail without retrying or showing an error.
+            if (myToken !== conversationToken) return;
+            lastError = err;
+            console.error("ggchat request failed (attempt " + attempt + "):", err);
+            if (attempt < MAX_ATTEMPTS) await delay(RETRY_BACKOFF_MS);
+          }
+        }
+
+        // All attempts exhausted — show a gentle message, not a raw error.
+        clearTimeout(wakingTimer);
+        typing.remove();
+        appendCharacter(
+          character,
+          "The characters are still stretching their legs — please give it a moment and try again."
+        );
+      } finally {
+        clearTimeout(wakingTimer);
+        // Only touch shared UI state if this send is still the current conversation;
+        // otherwise the change handler has already reset busy/focus.
+        if (myToken === conversationToken) {
+          setBusy(false);
+          if (!firstMessageSent) {
+            firstMessageSent = true;
+            coldNote.classList.add("hidden");
+          }
+          inputEl.focus();
+        }
+      }
+    }
+
+    // Switching characters starts a clean conversation and discards any in-flight reply.
+    selectEl.addEventListener("change", function () {
+      conversationToken++;                            // invalidate any in-flight reply
+      if (activeController) activeController.abort();  // cancel the in-flight fetch
+      resetConversation();                            // clear screen + history, show hint
+      if (busy) setBusy(false);                       // re-enable input promptly
+      inputEl.focus();
+    });
+
+    sendBtn.addEventListener("click", send);
+    inputEl.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        send();
+      }
+    });
+
+    inputEl.focus();
+
+    // Pre-warm the Space so it starts waking before the first message.
+    // Fire-and-forget: the result is ignored and errors are swallowed.
+    fetch(SPACE_URL + "/health", { method: "GET" }).catch(function () {});
+  </script>
+</body>
+</html>

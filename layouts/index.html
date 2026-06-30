@@ -52,15 +52,45 @@
     line-height: 1.6;
   }
 
-  .home-social a {
-    margin-right: .85rem;
+  .home-social {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    max-width: 360px;
+    margin-top: 1.2rem;
+  }
+
+  .social-item {
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .45rem;
+    color: inherit;
+    text-decoration: none;
   }
 
   .home-social svg {
-    width: 1.4rem;
-    height: 1.4rem;
-    vertical-align: middle;
+    width: 2rem;
+    height: 2rem;
   }
+
+  .social-label {
+    font-size: .72rem;
+    letter-spacing: .04em;
+    opacity: .6;
+  }
+
+  .social-item:hover { color: #fff; }
+  .social-item:hover .social-label { opacity: .85; }
+
+  .project-link {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: none;
+  }
+  .project-link:hover { color: #fff; }
 
   @media (max-width: 600px) {
     .home-rows {
@@ -72,8 +102,9 @@
       text-align: center;
       gap: 1.25rem;
     }
-    .home-social a {
-      margin: 0 .45rem;
+    .home-social {
+      justify-content: center;
+      margin: 1.2rem auto 0;
     }
   }
 </style>
@@ -88,23 +119,28 @@
       <div class="row-text">
         <h1>{{ .Site.Title }}</h1>
         <p>{{ with .Site.Params.homeSubtitle }}{{ . }}{{ end }}</p>
-        <p>Placeholder bio — replace this with a short paragraph about yourself
-          (what you study, what you're interested in, what you're working on).</p>
         {{- with .Site.Params.socialLinks }}
-        <div class="home-social">{{ partialCached "social-icons.html" . }}</div>
+        {{- $labels := dict "email" "Email" "github" "GitHub" "linkedin" "LinkedIn" "resume" "Resume" }}
+        <div class="home-social">
+          {{- range . }}
+          <a class="social-item" href="{{ .url | safeURL }}" target="_blank" rel="noopener me"
+             title="{{ index $labels .name | default (.name | humanize) }}">
+            {{ partial "svg.html" . }}
+            <span class="social-label">{{ index $labels .name | default (.name | humanize) }}</span>
+          </a>
+          {{- end }}
+        </div>
         {{- end }}
       </div>
     </section>
 
     <section class="info-row">
-      <a href="#" class="row-img-link" title="ggchatbot">
-        <img class="row-img" src="{{ "gilmore-girls.jpg" | relURL }}" alt="ggchatbot — a Gilmore Girls chatbot">
+      <a href="{{ "ggchitchat/" | relURL }}" class="row-img-link" title="Gilmore Girls Chat Bot Project">
+        <img class="row-img" src="{{ "gilmore-girls.jpg" | relURL }}" alt="Gilmore Girls Chat Bot Project">
       </a>
       <div class="row-text">
-        <h2>ggchatbot</h2>
-        <p>Placeholder project description — replace this with a few sentences about
-          ggchatbot: what it does, what you built it with, and what makes it fun.
-          Click the image to try it (link to be added once it's live).</p>
+        <h2><a class="project-link" href="{{ "ggchitchat/" | relURL }}">Gilmore Girls Chat Bot Project</a></h2>
+        <p>Pick a Gilmore Girls character and chit chat away.</p>
       </div>
     </section>
 
