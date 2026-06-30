@@ -1,0 +1,112 @@
+{{ define "head" }}
+<style>
+  .home-rows {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 6rem 1rem 3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
+  }
+
+  .info-row {
+    display: flex;
+    align-items: center;
+    gap: 2.5rem;
+  }
+
+  .row-img-link {
+    flex: 0 0 auto;
+    display: block;
+    border-bottom: none;
+  }
+
+  .row-img {
+    width: 220px;
+    height: 220px;
+    flex: 0 0 auto;
+    object-fit: cover;
+    border-radius: 6px;
+    /* Placeholder appearance until a real image file is added */
+    background: rgba(127, 127, 127, .15);
+    box-shadow: 0 1px 12px rgba(0, 0, 0, .15);
+  }
+
+  .row-img--round {
+    border-radius: 50%;
+  }
+
+  .row-text {
+    flex: 1 1 auto;
+  }
+
+  .row-text h1,
+  .row-text h2 {
+    margin: 0 0 .6rem;
+  }
+
+  .row-text p {
+    margin: 0 0 1rem;
+    line-height: 1.6;
+  }
+
+  .home-social a {
+    margin-right: .85rem;
+  }
+
+  .home-social svg {
+    width: 1.4rem;
+    height: 1.4rem;
+    vertical-align: middle;
+  }
+
+  @media (max-width: 600px) {
+    .home-rows {
+      padding-top: 4.5rem;
+      gap: 3rem;
+    }
+    .info-row {
+      flex-direction: column;
+      text-align: center;
+      gap: 1.25rem;
+    }
+    .home-social a {
+      margin: 0 .45rem;
+    }
+  }
+</style>
+{{ end }}
+
+{{ define "main" }}
+<div id="spotlight" class="animated fadeIn">
+  <div class="home-rows">
+
+    <section class="info-row">
+      <img class="row-img row-img--round" src="{{ "headshot.jpg" | relURL }}" alt="Uma Iyer">
+      <div class="row-text">
+        <h1>{{ .Site.Title }}</h1>
+        <p>{{ with .Site.Params.homeSubtitle }}{{ . }}{{ end }}</p>
+        <p>Placeholder bio — replace this with a short paragraph about yourself
+          (what you study, what you're interested in, what you're working on).</p>
+        {{- with .Site.Params.socialLinks }}
+        <div class="home-social">{{ partialCached "social-icons.html" . }}</div>
+        {{- end }}
+      </div>
+    </section>
+
+    <section class="info-row">
+      <a href="#" class="row-img-link" title="ggchatbot">
+        <img class="row-img" src="{{ "gilmore-girls.jpg" | relURL }}" alt="ggchatbot — a Gilmore Girls chatbot">
+      </a>
+      <div class="row-text">
+        <h2>ggchatbot</h2>
+        <p>Placeholder project description — replace this with a few sentences about
+          ggchatbot: what it does, what you built it with, and what makes it fun.
+          Click the image to try it (link to be added once it's live).</p>
+      </div>
+    </section>
+
+  </div>
+  <div id="home-footer">{{ partialCached "single-footer.html" . }}</div>
+</div>
+{{ end }}
